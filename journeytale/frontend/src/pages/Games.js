@@ -1,42 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { Link } from 'react-router-dom';
 
 const Games = () => {
-  const [gameTitle, setGameTitle] = useState('');
-  const [gameList, setGameList] = useState([]);
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddGame = (e) => {
-    e.preventDefault();
-    if (gameTitle.trim() !== '') {
-      setGameList([...gameList, gameTitle]);
-      setGameTitle('');
-    }
-  };
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/games'); // Adjust the URL based on your FastAPI server
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setGames(data);
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGames();
+  }, []);
 
   return (
     <Layout>
-        <h1 className="text-4xl font-bold mb-4 font-serif text-blue-500">My Game Library</h1>
-        <form onSubmit={handleAddGame} className="mb-4">
-            <input
-            type="text"
-            value={gameTitle}
-            onChange={(e) => setGameTitle(e.target.value)}
-            placeholder="Enter game title"
-            className="border border-gray-400 p-2 rounded mr-2"
-            />
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded font-serif">
-            Add Game
-            </button>
-        </form>
-        <ul className="list-disc pl-5">
-            {gameList.map((game, index) => (
-            <li key={index} className="text-lg">{game}</li>
-            ))}
+      <h1 className="text-4xl font-bold text-blue-500 font-serif">Games Library</h1>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {games.map((game) => (
+            <li key={game.id} className="mb-2">
+              <h2 className="text-2xl font-serif">{game.title}</h2>
+              <p>{game.description}</p>
+            </li>
+          ))}
         </ul>
-        <Link to="/game-entry" className="text-blue-500 underline">
-            Go to Game Entry Page
-        </Link>
+      )}
     </Layout>
   );
 };
