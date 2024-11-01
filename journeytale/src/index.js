@@ -1,21 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from "react-router-dom";
 import './index.css';
-//import App from './App';
 import reportWebVitals from './reportWebVitals';
-
-function HelloWorld() {
-  return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-4xl font-cormorant-bold text-blue-500">Welcome to JourneyTale!</h1>
-    </div>
-  );
-}
+import HelloWorld from './components/HelloWorld';
+import Sidebar from './components/Sidebar';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <HelloWorld />
+    <BrowserRouter>
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex-grow overflow-y-auto">
+          <HelloWorld />
+        </div>
+      </div>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
