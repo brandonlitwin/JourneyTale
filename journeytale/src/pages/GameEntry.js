@@ -17,7 +17,7 @@ const GameEntry = () => {
 
   return (
     <Layout>
-      <h1 className="text-3xl font-bold mb-4">Game Entries</h1>
+      <h1 className="text-3xl font-bold mb-4 text-blue-500">Game Entries</h1>
       <form onSubmit={handleAddEntry} className="mb-4">
         <input
           type="date"
