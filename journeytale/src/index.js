@@ -1,22 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import HelloWorld from './components/HelloWorld';
 import Sidebar from './components/Sidebar';
+import Games from './pages/Games';
+import GameEntry from './pages/GameEntry';
+import Settings from './pages/Settings';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <Router>
       <div className="flex h-screen">
         <Sidebar />
         <div className="flex-grow overflow-y-auto">
-          <HelloWorld />
+          <Routes>
+            <Route path="/" element={<HelloWorld />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/game-entry" element={<GameEntry />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
         </div>
       </div>
-    </BrowserRouter>
+    </Router>
   </React.StrictMode>
 );
 
