@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import { Link } from 'react-router-dom';
 
 const Games = () => {
   const [games, setGames] = useState([]);
@@ -8,7 +9,7 @@ const Games = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch('http://localhost:8000/games'); // Adjust the URL based on your FastAPI server
+        const response = await fetch('http://localhost:8000/games?user_id=1');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -30,14 +31,22 @@ const Games = () => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ul>
-          {games.map((game) => (
-            <li key={game.id} className="mb-2">
-              <h2 className="text-2xl font-serif">{game.title}</h2>
-              <p>{game.description}</p>
-            </li>
-          ))}
-        </ul>
+        <>
+          {games.length === 0 ? (
+            <p>No games available in your library.</p>
+          ) : (
+            <ul>
+              {games.map((game) => (
+                <li key={game.id} className="mb-2">
+                  <h2 className="text-2xl font-serif">
+                    <Link to={`/game-entry/${game.id}`}>{game.title}</Link>
+                  </h2>
+                  <p>{game.description}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </Layout>
   );

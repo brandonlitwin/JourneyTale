@@ -1,17 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
+import { useParams } from 'react-router-dom';
 
-const GameEntry = () => {
+const GameEntry = ({userId}) => {
+  const { gameId } = useParams();
   const [entryDate, setEntryDate] = useState('');
   const [entryDescription, setEntryDescription] = useState('');
   const [entries, setEntries] = useState([]);
 
-  const handleAddEntry = (e) => {
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/games/${gameId}/entries?user_id=${userId}`);
+        if (!response.ok) throw new Error('Failed to fetch entries');
+        const data = await response.json();
+        setEntries(data);
+      } catch (error) {
+        console.error('Error fetching entries:', error);
+      }
+    };
+    fetchEntries();
+  }, [gameId, userId]);
+
+  const handleAddEntry = async (e) => {
     e.preventDefault();
     if (entryDate && entryDescription) {
-      setEntries([...entries, { date: entryDate, description: entryDescription }]);
-      setEntryDate('');
-      setEntryDescription('');
+      try {
+        const response = await fetch(`http://localhost:8000/games/${gameId}/entries`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            date: entryDate,
+            description: entryDescription,
+            user_id: userId,
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to add entry');
+        const newEntry = await response.json();
+
+        setEntries([...entries, newEntry]);
+        setEntryDate('');
+        setEntryDescription('');
+      } catch (error) {
+        console.error('Error adding entry:', error);
+      }
     }
   };
 

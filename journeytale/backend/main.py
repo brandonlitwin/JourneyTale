@@ -1,15 +1,12 @@
-from fastapi import FastAPI, Depends
-from pydantic import BaseModel
+from fastapi import FastAPI, Depends, HTTPException
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
-from db.schemas import GameCreate, GameResponse
-from db.models import Game
-from db.database import init_db, get_db
+from db import models, schemas, database, crud
 from sqlalchemy.orm import Session
 
 app = FastAPI()
 
-init_db()
+database.init_db()
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,15 +20,21 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to JourneyTale API!"}
 
-@app.get("/games")
-def read_games(db: Session = Depends(get_db)):
-    games = db.query(Game).all()
-    return games
+@app.get("/games", response_model=List[schemas.GameResponse])
+def read_games(user_id: int, db: Session = Depends(database.get_db)):
+    return crud.read_games(user_id, db)
 
-@app.post("/games", response_model=GameResponse)
-async def create_game(game: GameCreate, db: Session = Depends(get_db)):
-    new_game = Game(title=game.title, description=game.description)
-    db.add(new_game)
-    db.commit()
-    db.refresh(new_game)
-    return new_game
+@app.post("/games", response_model=schemas.GameResponse)
+async def create_game(game: schemas.GameCreate, db: Session = Depends(database.get_db)):
+    return crud.create_game(db, game)
+
+@app.get("/games/{game_id}/entries", response_model=List[schemas.GameEntryResponse])
+def read_game_entries(game_id: int, db: Session = Depends(database.get_db)):
+    entries = crud.get_entries_by_game(db, game_id)
+    if not entries:
+        raise HTTPException(status_code=404, detail="No entries found for this game.")
+    return entries
+
+@app.post("/entries", response_model=schemas.GameEntryResponse)
+async def create_game_entry(game_entry: schemas.GameCreate, db: Session = Depends(database.get_db)):
+    return crud.create_game_entry(db, game_entry)
