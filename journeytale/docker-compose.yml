@@ -1,5 +1,6 @@
 services:
   frontend:
+    container_name: journeytale-frontend
     build:
       context: ./frontend
     volumes:
@@ -17,6 +18,7 @@ services:
       - journeytale-network
 
   backend:
+    container_name: journeytale-backend
     build:
       context: ./backend
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
@@ -26,13 +28,14 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@journeytale-db:5432/postgres
     depends_on:
       - db
     networks:
       - journeytale-network
 
   db:
+    container_name: journeytale-db
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
