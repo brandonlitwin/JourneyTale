@@ -1,34 +1,37 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
+from db.schemas import GameCreate, GameResponse
+from db.models import Game
+from db.database import init_db, get_db
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
+init_db()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Adjust based on your frontend URL
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-class Game(BaseModel):
-    id: int
-    title: str
-    description: str
-
-# In-memory database for demonstration purposes
-games_db = [
-    Game(id=1, title="Game One", description="Description of Game One."),
-    Game(id=2, title="Game Two", description="Description of Game Two."),
-]
-
 @app.get("/")
 def read_root():
     return {"message": "Welcome to JourneyTale API!"}
 
-@app.get("/games", response_model=List[Game])
-async def get_games():
-    return games_db
+@app.get("/games")
+def read_games(db: Session = Depends(get_db)):
+    games = db.query(Game).all()
+    return games
 
+@app.post("/games", response_model=GameResponse)
+async def create_game(game: GameCreate, db: Session = Depends(get_db)):
+    new_game = Game(title=game.title, description=game.description)
+    db.add(new_game)
+    db.commit()
+    db.refresh(new_game)
+    return new_game
