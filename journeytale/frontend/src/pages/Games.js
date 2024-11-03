@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { Link } from 'react-router-dom';
+import GameList from '../components/GameList';
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -56,6 +56,7 @@ const Games = () => {
       }
     }
   };
+  console.log("Games data:", games);
 
   return (
     <Layout>
@@ -67,16 +68,7 @@ const Games = () => {
           {games.length === 0 ? (
             <p>No games available in your library.</p>
           ) : (
-            <ul>
-              {games.map((game) => (
-                <li key={game.id} className="mb-2">
-                  <h2 className="text-2xl font-serif">
-                    <Link to={`/game-entry/${game.id}`}>{game.title}</Link>
-                  </h2>
-                  <p>{game.description}</p>
-                </li>
-              ))}
-            </ul>
+            <GameList games={games}/>
           )}
           
           <button
