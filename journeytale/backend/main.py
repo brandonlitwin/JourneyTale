@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
-from db import models, schemas, database, crud
+from db import schemas, database, crud
 from sqlalchemy.orm import Session
 
 app = FastAPI()

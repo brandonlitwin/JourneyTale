@@ -5,7 +5,7 @@ def read_games(user_id: int, db: Session):
     return db.query(models.Game).filter(models.Game.user_id == user_id).all()
 
 def create_game(db: Session, game: schemas.GameCreate):
-    new_game = models.Game(title=game.title, description=game.description)
+    new_game = models.Game(title=game.title, description=game.description, user_id=game.user_id)
     db.add(new_game)
     db.commit()
     db.refresh(new_game)

@@ -16,24 +16,7 @@ services:
       - backend
     networks:
       - journeytale-network
-
-  backend:
-    container_name: journeytale-backend
-    build:
-      context: ./backend
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@journeytale-db:5432/postgres
-    depends_on:
-      - db
-    networks:
-      - journeytale-network
-
+  
   db:
     container_name: journeytale-db
     image: postgres:13
@@ -43,6 +26,22 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - journeytale-network
+
+  backend:
+    container_name: journeytale-backend
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@journeytale-db:5432/postgres
+    depends_on:
+      - db
     networks:
       - journeytale-network
 

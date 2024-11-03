@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database import Base  # Adjust import according to your structure
-#from models import User, Game, GameEntry  # Import your models
+from db.database import Base
+from db.models import User
 
 # Update the database URL as per your settings
 DATABASE_URL = "postgresql://postgres:postgres@journeytale-db:5432/postgres"
@@ -19,6 +19,17 @@ def reset_database():
     # Create all tables
     Base.metadata.create_all(engine)
     print("Created all tables.")
+
+    from bcrypt import hashpw, gensalt
+
+    hashed_password = hashpw(b"testpassword", gensalt())
+
+    # Insert a test user
+    test_user = User(id=1, username="testuser", password=hashed_password.decode('utf-8'))
+    session.add(test_user)
+    session.commit()
+    session.refresh(test_user)
+    print("Test user inserted.")
 
     # Close the session
     session.close()
