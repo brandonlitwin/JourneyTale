@@ -35,6 +35,6 @@ def read_game_entries(game_id: int, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=404, detail="No entries found for this game.")
     return entries
 
-@app.post("/entries", response_model=schemas.GameEntryResponse)
-async def create_game_entry(game_entry: schemas.GameCreate, db: Session = Depends(database.get_db)):
+@app.post("/games/{game_id}/entries", response_model=schemas.GameEntryResponse)
+async def create_game_entry(game_entry: schemas.GameEntryCreate, db: Session = Depends(database.get_db)):
     return crud.create_game_entry(db, game_entry)

@@ -13,8 +13,8 @@ def create_game(db: Session, game: schemas.GameCreate):
 
 def create_game_entry(db: Session, entry: schemas.GameEntryCreate):
     db_entry = models.GameEntry(
-        date=entry.date,
         description=entry.description,
+        date_created=entry.date_created,
         game_id=entry.game_id,
         user_id=entry.user_id
     )

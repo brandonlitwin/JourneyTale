@@ -27,7 +27,6 @@ class GameEntry(Base):
     __tablename__ = "game_entries"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
     description = Column(String)
     date_created = Column(DateTime)
     game_id = Column(Integer, ForeignKey("games.id"), nullable=False)

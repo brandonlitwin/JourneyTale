@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useParams } from 'react-router-dom';
 
-const GameEntry = ({userId}) => {
+const BASE_URL = 'http://localhost:8000';
+
+const GameEntry = () => {
+  const userId = 1;
   const { gameId } = useParams();
   const [entryDate, setEntryDate] = useState('');
   const [entryDescription, setEntryDescription] = useState('');
@@ -11,7 +14,7 @@ const GameEntry = ({userId}) => {
   useEffect(() => {
     const fetchEntries = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/games/${gameId}/entries?user_id=${userId}`);
+        const response = await fetch(`${BASE_URL}/games/${gameId}/entries?user_id=${userId}`);
         if (!response.ok) throw new Error('Failed to fetch entries');
         const data = await response.json();
         setEntries(data);
@@ -26,14 +29,15 @@ const GameEntry = ({userId}) => {
     e.preventDefault();
     if (entryDate && entryDescription) {
       try {
-        const response = await fetch(`http://localhost:8000/games/${gameId}/entries`, {
+        const response = await fetch(`${BASE_URL}/games/${gameId}/entries`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            date: entryDate,
+            date_created: entryDate,
             description: entryDescription,
+            game_id: gameId,
             user_id: userId,
           }),
         });
@@ -85,7 +89,7 @@ const GameEntry = ({userId}) => {
         <tbody>
           {entries.map((entry, index) => (
             <tr key={index}>
-              <td className="border border-gray-300 p-2">{entry.date}</td>
+              <td className="border border-gray-300 p-2">{entry.date_created}</td>
               <td className="border border-gray-300 p-2">{entry.description}</td>
             </tr>
           ))}

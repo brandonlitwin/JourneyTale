@@ -16,7 +16,7 @@ class GameResponse(BaseModel):
         orm_mode = True
 
 class GameEntryBase(BaseModel):
-    date: date
+    date_created: date
     description: str
 
 class GameEntryCreate(GameEntryBase):
